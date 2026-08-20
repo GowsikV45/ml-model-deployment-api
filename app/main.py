@@ -8,4 +8,4 @@ def root():
 
 @app.post("/predict")
 def predict():
-    return {"prediction": "hardcoded_result"} # no model yet, on purpose
+    return {"prediction": "hardcoded_result"}
