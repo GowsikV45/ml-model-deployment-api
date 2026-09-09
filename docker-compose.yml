@@ -1,0 +1,8 @@
+services:
+  ml-api:
+    build: .
+    image: ml-api:v1
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env

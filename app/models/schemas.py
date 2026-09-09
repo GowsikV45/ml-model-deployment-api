@@ -1,7 +1,9 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class PredictionInput(BaseModel):
+
+    model_config = ConfigDict(extra="forbid")
 
     sepal_length: float = Field(..., gt=0)
 
@@ -22,6 +24,8 @@ class PredictionOutput(BaseModel):
 
 
 class PredictionBatchInput(BaseModel):
+
+    model_config = ConfigDict(extra="forbid")
 
     inputs: list[PredictionInput] = Field(
         ...,

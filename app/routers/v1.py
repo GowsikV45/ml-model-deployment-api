@@ -2,7 +2,7 @@ import time
 from uuid import uuid4
 
 import pandas as pd
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, Depends, Header
 
 from app.config import settings
 from app.models.schemas import (
@@ -13,7 +13,20 @@ from app.models.schemas import (
 )
 
 
-router = APIRouter(prefix="/api/v1")
+async def verify_api_key(
+    x_api_key: str | None = Header(default=None)
+):
+    if x_api_key != settings.API_KEY:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or missing API key"
+        )
+
+
+router = APIRouter(
+    prefix="/api/v1",
+    dependencies=[Depends(verify_api_key)]
+)
 
 
 # ---------------------------------------------------------
@@ -146,7 +159,6 @@ def predict_batch(
 
     try:
 
-        # Convert complete batch into DataFrame
         input_data = pd.DataFrame([
             {
                 "sepal length (cm)": item.sepal_length,
@@ -156,10 +168,6 @@ def predict_batch(
             }
             for item in data.inputs
         ])
-
-        # -------------------------------------------------
-        # Efficient batch prediction
-        # -------------------------------------------------
 
         predictions = model.predict(input_data)
 
